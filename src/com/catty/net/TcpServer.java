@@ -9,12 +9,14 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.TreeMap;
 
 public class TcpServer implements Runnable {
-	private Selector 				selector = null;
-	private ServerSocketChannel		sschannel = null;
-	private InetSocketAddress		address = null;
-	protected Notifier 				notifier;
+	private Selector 					selector = null;
+	private ServerSocketChannel			sschannel = null;
+	private InetSocketAddress			address = null;
+	private TreeMap<Integer, Object> 	timers;
+	protected Notifier 					notifier;
 	
 	
 	public TcpServer(int port) throws IOException{
@@ -52,11 +54,11 @@ public class TcpServer implements Runnable {
 							sc.configureBlocking(false);
 							
 							// 触发接受连接事件
-                           Request request = new Request(sc);
-                           notifier.fireOnAccepted(request);
+                            Request request = new Request(sc);
+                            notifier.fireOnAccepted(request);
 
-                           // 注册读操作,以进行下一步的读操作
-                           sc.register(selector,  SelectionKey.OP_READ, request);
+                            // 注册读操作,以进行下一步的读操作
+                            sc.register(selector,  SelectionKey.OP_READ, request);
 							
 						}
 						// 处理read事件
